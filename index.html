@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vishnu Jariwala — Creative Builder & Problem Solver</title>
+  <meta name="description" content="Portfolio of Vishnu Jariwala — a creative builder, problem solver, and digital creator specializing in web development, Flutter, AI/ML, cloud computing, and visual design." />
+  <meta name="keywords" content="Vishnu Jariwala, portfolio, web developer, Flutter, AI ML, cloud, creative builder" />
+  <meta name="author" content="Vishnu Jariwala" />
+  <meta property="og:title" content="Vishnu Jariwala — Creative Builder & Problem Solver" />
+  <meta property="og:description" content="I study. I solve. I build. I create. Explore my work." />
+  <meta property="og:type" content="website" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ═══ LOADER ═══ -->
+  <div id="loader">
+    <div class="loader-content">
+      <div class="loader-text">VJ</div>
+      <div class="loader-counter" id="loaderCounter">0</div>
+      <div class="loader-bar">
+        <div class="loader-progress" id="loaderProgress"></div>
+      </div>
+    </div>
+  </div>
+  <!-- Inline counter so it starts immediately, before module loads -->
+  <script>
+    (function () {
+      var c = document.getElementById('loaderCounter');
+      var p = document.getElementById('loaderProgress');
+      var n = 0;
+      var iv = setInterval(function () {
+        n += Math.floor(Math.random() * 4) + 2;
+        if (n > 100) n = 100;
+        c.textContent = n;
+        p.style.width = n + '%';
+        if (n >= 100) clearInterval(iv);
+      }, 40);
+    })();
+  </script>
+
+  <!-- ═══ CUSTOM CURSOR ═══ -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-outline" id="cursorOutline"></div>
+
+  <!-- ═══ THREE.JS CANVAS ═══ -->
+  <div id="canvas-container"></div>
+
+  <!-- ═══ NOISE OVERLAY ═══ -->
+  <div class="noise-overlay"></div>
+
+  <!-- ═══ NAVIGATION ═══ -->
+  <nav id="navbar">
+    <a href="#hero" class="nav-logo magnetic" data-strength="0.3">VJ<span class="logo-dot">.</span></a>
+    <div class="nav-links" id="navLinks">
+      <a href="#about" data-index="01">About</a>
+      <a href="#skills" data-index="02">Skills</a>
+      <a href="#projects" data-index="03">Projects</a>
+      <a href="#contact" data-index="04">Contact</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- ═══ HERO ═══ -->
+  <section id="hero">
+    <!-- Ghost photo backdrop -->
+    <div class="hero-photo-bg" aria-hidden="true">
+      <img src="ChatGPT_Image_Jun_18__2026__01_58_08_PM-removebg-preview.png" alt="" draggable="false" />
+    </div>
+
+    <div class="hero-content">
+      <p class="hero-label">Creative Builder & Problem Solver</p>
+      <h1 class="hero-name" aria-label="Vishnu Jariwala">
+        <span class="hero-name-line">VISHNU</span>
+        <span class="hero-name-line">JARIWALA</span>
+      </h1>
+      <p class="hero-tagline">I am a <span class="typewriter" id="typewriter"></span><span class="typewriter-cursor">|</span></p>
+    </div>
+    <div class="scroll-indicator">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ═══ ABOUT ═══ -->
+  <section id="about">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-number">01</span>
+        <h2>About</h2>
+        <div class="header-line"></div>
+      </div>
+
+      <div class="about-grid">
+        <div class="about-image-wrapper" id="aboutImage">
+          <!-- Decorative corners -->
+          <span class="corner corner-tl"></span>
+          <span class="corner corner-tr"></span>
+          <span class="corner corner-bl"></span>
+          <span class="corner corner-br"></span>
+          <!-- Reveal mask -->
+          <div class="image-mask"></div>
+          <img src="ChatGPT_Image_Jun_18__2026__01_58_08_PM-removebg-preview.png" alt="Vishnu Jariwala portrait" />
+          <div class="image-overlay"></div>
+          <!-- Scan lines on hover -->
+          <div class="image-scanlines"></div>
+          <!-- Tag label -->
+          <div class="image-tag">VJ — 2026</div>
+        </div>
+        <div class="about-text">
+          <p class="reveal">
+            I'm <span class="highlight">Vishnu</span> — a creative builder who lives at the intersection of
+            <span class="highlight">technology and design</span>. I study, solve complex problems, and think
+            critically about everything I create.
+          </p>
+          <p class="reveal">
+            From crafting interactive web experiences to building cross-platform mobile apps with
+            <span class="highlight">Flutter</span>, from creating stunning visuals with
+            <span class="highlight">Adobe's creative suite</span> to engineering
+            <span class="highlight">AI/ML solutions</span> and
+            <span class="highlight">cloud architectures</span> — I bring ideas to life across every medium I touch.
+          </p>
+          <p class="reveal">
+            I also create and edit videos, design graphics, and constantly push the boundaries of what's
+            possible at the intersection of creativity and code.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ MARQUEE ═══ -->
+  <div class="marquee-section" aria-hidden="true">
+    <div class="marquee-track">
+      <span class="marquee-content">DEVELOPMENT ✦ FLUTTER ✦ CLOUD COMPUTING ✦ AI / ML ✦ VIDEO PRODUCTION ✦ GRAPHIC DESIGN ✦ WEB DEVELOPMENT ✦ ADOBE CREATIVE ✦ PROBLEM SOLVING ✦ CRITICAL THINKING ✦ </span>
+      <span class="marquee-content">DEVELOPMENT ✦ FLUTTER ✦ CLOUD COMPUTING ✦ AI / ML ✦ VIDEO PRODUCTION ✦ GRAPHIC DESIGN ✦ WEB DEVELOPMENT ✦ ADOBE CREATIVE ✦ PROBLEM SOLVING ✦ CRITICAL THINKING ✦ </span>
+    </div>
+  </div>
+
+  <!-- ═══ SKILLS ═══ -->
+  <section id="skills">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-number">02</span>
+        <h2>Skills</h2>
+        <div class="header-line"></div>
+      </div>
+
+      <div class="skills-grid">
+        <!-- Development -->
+        <div class="skill-category">
+          <div class="skill-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <h3>Development</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">HTML / CSS</span>
+            <span class="skill-tag">JavaScript</span>
+            <span class="skill-tag">React</span>
+            <span class="skill-tag">Three.js</span>
+            <span class="skill-tag">Node.js</span>
+            <span class="skill-tag">Python</span>
+          </div>
+        </div>
+
+        <!-- Mobile -->
+        <div class="skill-category">
+          <div class="skill-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          </div>
+          <h3>Mobile</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">Flutter</span>
+            <span class="skill-tag">Dart</span>
+            <span class="skill-tag">Firebase</span>
+            <span class="skill-tag">Material Design</span>
+          </div>
+        </div>
+
+        <!-- Design & Creative -->
+        <div class="skill-category">
+          <div class="skill-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+          </div>
+          <h3>Design & Creative</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">Premiere Pro</span>
+            <span class="skill-tag">After Effects</span>
+            <span class="skill-tag">Photoshop</span>
+            <span class="skill-tag">Illustrator</span>
+            <span class="skill-tag">Figma</span>
+            <span class="skill-tag">Video Editing</span>
+          </div>
+        </div>
+
+        <!-- Cloud & AI -->
+        <div class="skill-category">
+          <div class="skill-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+          </div>
+          <h3>Cloud & AI/ML</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">Google Cloud</span>
+            <span class="skill-tag">AWS</span>
+            <span class="skill-tag">Machine Learning</span>
+            <span class="skill-tag">TensorFlow</span>
+            <span class="skill-tag">Cloud Architecture</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PROJECTS ═══ -->
+  <section id="projects">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-number">03</span>
+        <h2>Projects</h2>
+        <div class="header-line"></div>
+      </div>
+
+      <div class="projects-grid">
+        <!-- Project 1 -->
+        <div class="project-card" data-tilt>
+          <div class="project-number">01</div>
+          <div class="project-info">
+            <h3>Cloud Smart Dustbin</h3>
+            <p>An intelligent waste classification system powered by machine learning. Classifies trash in real-time on mobile devices with a fully cloud-native architecture — making waste management smarter and automated.</p>
+            <div class="project-tech">
+              <span>Cloud</span>
+              <span>ML</span>
+              <span>Python</span>
+              <span>Mobile</span>
+            </div>
+          </div>
+          <div class="project-arrow magnetic" data-strength="0.4">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Project 2 -->
+        <div class="project-card" data-tilt>
+          <div class="project-number">02</div>
+          <div class="project-info">
+            <h3>F1 Companion App</h3>
+            <p>A premium Formula 1 companion application featuring real-time race data, custom dark/light theming, Firestore sync, and advanced statistics visualization — built for true F1 enthusiasts.</p>
+            <div class="project-tech">
+              <span>Flutter</span>
+              <span>Firebase</span>
+              <span>Dart</span>
+              <span>API</span>
+            </div>
+          </div>
+          <div class="project-arrow magnetic" data-strength="0.4">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Project 3 -->
+        <div class="project-card" data-tilt>
+          <div class="project-number">03</div>
+          <div class="project-info">
+            <h3>This Portfolio</h3>
+            <p>An interactive 3D portfolio experience built from scratch with Three.js. Features particle systems, dynamic wireframe geometry, cursor-reactive elements, and scroll-driven animations.</p>
+            <div class="project-tech">
+              <span>Three.js</span>
+              <span>GSAP</span>
+              <span>JavaScript</span>
+              <span>WebGL</span>
+            </div>
+          </div>
+          <div class="project-arrow magnetic" data-strength="0.4">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- More Coming -->
+        <div class="project-card coming-soon">
+          <div class="project-number">04</div>
+          <div class="project-info">
+            <h3>More Coming Soon<span class="blink-dot">_</span></h3>
+            <p>Currently working on exciting new projects pushing the limits of cloud, AI, and creative technology. Stay tuned for updates.</p>
+            <div class="project-tech">
+              <span>???</span>
+              <span>In Progress</span>
+            </div>
+          </div>
+          <div class="project-arrow coming-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CONTACT ═══ -->
+  <section id="contact">
+    <div class="container contact-container">
+      <div class="section-header" style="justify-content: center;">
+        <span class="section-number">04</span>
+      </div>
+
+      <h2 class="contact-heading">Let's Build<br/>Something <span class="gradient-text">Together</span></h2>
+      <p class="contact-subtext">
+        Have an idea, a question, or just want to say hello?<br/>
+        I'm always open to new opportunities and creative collaborations.
+      </p>
+
+      <a href="mailto:visutj2878@gmail.com" class="contact-email magnetic" data-strength="0.25" id="contactEmail">
+        visutj2878@gmail.com
+      </a>
+
+      <div class="social-links">
+        <a href="https://github.com/07vish" target="_blank" rel="noopener noreferrer" class="social-link magnetic" data-strength="0.35" aria-label="GitHub">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/in/vishnu-jariwala-it-ssgp-dte-1148a5283" target="_blank" rel="noopener noreferrer" class="social-link magnetic" data-strength="0.35" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </a>
+        <a href="mailto:visutj2878@gmail.com" class="social-link magnetic" data-strength="0.35" aria-label="Email">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer>
+    <div class="footer-content">
+      <p>Designed & Built by <span class="highlight">Vishnu Jariwala</span></p>
+      <p class="footer-year">© 2026</p>
+    </div>
+  </footer>
+
+  <!-- ═══ SCRIPTS ═══ -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.174.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.174.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module" src="app.js"></script>
+
+</body>
+</html>
