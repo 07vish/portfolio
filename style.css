@@ -1436,6 +1436,20 @@ footer .highlight { color: var(--text-secondary); }
     pointer-events: none;
     z-index: 0;
   }
+
+  /* ─── Gyro Parallax Translation for Layers ─── */
+  .hero-content {
+    transform: translate3d(calc(var(--gyro-x, 0px) * -0.6), calc(var(--gyro-y, 0px) * -0.6), 0);
+    transition: transform 0.15s ease-out;
+  }
+  .about-image-wrapper {
+    transform: translate3d(var(--gyro-x, 0px), var(--gyro-y, 0px), 0);
+    transition: transform 0.2s ease-out;
+  }
+  .skill-category, .project-card {
+    transform: translate3d(calc(var(--gyro-x, 0px) * 0.3), calc(var(--gyro-y, 0px) * 0.3), 0);
+    transition: transform 0.25s ease-out;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1449,6 +1463,74 @@ footer .highlight { color: var(--text-secondary); }
   }
   #navbar { padding: 1rem; }
   section { padding: 5rem 1rem; }
+}
+
+/* ─── GYRO MOTION TOGGLE ─── */
+.gyro-toggle {
+  position: fixed;
+  bottom: 2rem;
+  left: 2rem;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(10, 10, 10, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.75rem 1.25rem;
+  border-radius: 100px;
+  color: var(--text-secondary);
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  transition: all 0.4s var(--ease-out-expo);
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+}
+
+.gyro-toggle:active {
+  transform: scale(0.95);
+}
+
+.gyro-toggle.active {
+  border-color: rgba(255, 255, 255, 0.25);
+  color: var(--text-primary);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1), 0 10px 30px rgba(0, 0, 0, 0.4);
+  background: rgba(20, 20, 20, 0.85);
+}
+
+.gyro-toggle.active .gyro-icon svg {
+  animation: gyroShake 2s ease-in-out infinite;
+  color: #fff;
+}
+
+.gyro-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gyro-text {
+  transition: color 0.3s;
+}
+
+@keyframes gyroShake {
+  0%, 100% { transform: rotate(0); }
+  20%, 60% { transform: rotate(-8deg); }
+  40%, 80% { transform: rotate(8deg); }
+}
+
+@media (max-width: 768px) {
+  .gyro-toggle {
+    bottom: 1.5rem;
+    left: 1.5rem;
+    padding: 0.65rem 1.1rem;
+    font-size: 0.72rem;
+  }
 }
 
 /* ─── REDUCED MOTION ─── */

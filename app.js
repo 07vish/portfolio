@@ -174,68 +174,104 @@ gsap.ticker.lagSmoothing(0);
     });
   }
 
-  // ─── Device Orientation for Mobile 3D ───
+  // ─── Device Orientation (Gyroscope) for Mobile ───
   let orientX = 0, orientY = 0;
   let targetOrientX = 0, targetOrientY = 0;
+  let gyroActive = false;
 
-  if (IS_MOBILE && window.DeviceOrientationEvent) {
-    // Try requesting permission for iOS 13+
-    const enableOrientation = () => {
-      if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-        DeviceOrientationEvent.requestPermission()
-          .then((state) => {
-            if (state === 'granted') {
-              window.addEventListener('deviceorientation', handleOrientation);
-            }
-          })
-          .catch(console.error);
-      } else {
-        window.addEventListener('deviceorientation', handleOrientation);
-      }
-    };
+  const gyroToggle = document.getElementById('gyroToggle');
 
-    function handleOrientation(e) {
-      if (e.gamma !== null && e.beta !== null) {
-        // gamma: left/right tilt (-90 to 90)
-        // beta: front/back tilt (-180 to 180)
-        targetOrientX = Math.max(-1, Math.min(1, (e.gamma || 0) / 30));
-        targetOrientY = Math.max(-1, Math.min(1, ((e.beta || 0) - 45) / 30));
-      }
+  function handleOrientation(e) {
+    if (e.gamma !== null && e.beta !== null) {
+      // gamma: left/right tilt (-90 to 90)
+      // beta: front/back tilt (-180 to 180)
+      targetOrientX = Math.max(-1, Math.min(1, (e.gamma || 0) / 30));
+      targetOrientY = Math.max(-1, Math.min(1, ((e.beta || 0) - 45) / 30));
+
+      // Update CSS variables for UI-level parallax response to tilting
+      document.documentElement.style.setProperty('--gyro-x', `${targetOrientX * 12}px`);
+      document.documentElement.style.setProperty('--gyro-y', `${targetOrientY * 12}px`);
     }
-
-    // Enable on first touch (for iOS permission)
-    document.addEventListener('touchstart', function onFirstTouch() {
-      enableOrientation();
-      document.removeEventListener('touchstart', onFirstTouch);
-    }, { once: true });
-
-    // Also try immediately for Android
-    enableOrientation();
   }
 
-  // ─── Touch drag tracking as fallback ───
-  if (IS_MOBILE) {
-    let touchStartX = 0, touchStartY = 0;
+  const enableGyro = () => {
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+      DeviceOrientationEvent.requestPermission()
+        .then((state) => {
+          if (state === 'granted') {
+            window.addEventListener('deviceorientation', handleOrientation);
+            gyroActive = true;
+            gyroToggle.classList.add('active');
+            gyroToggle.querySelector('.gyro-text').textContent = 'Motion On';
+          } else {
+            console.log('Gyro permission denied');
+          }
+        })
+        .catch(console.error);
+    } else {
+      window.addEventListener('deviceorientation', handleOrientation);
+      gyroActive = true;
+      gyroToggle.classList.add('active');
+      gyroToggle.querySelector('.gyro-text').textContent = 'Motion On';
+    }
+  };
 
+  const disableGyro = () => {
+    window.removeEventListener('deviceorientation', handleOrientation);
+    gyroActive = false;
+    gyroToggle.classList.remove('active');
+    gyroToggle.querySelector('.gyro-text').textContent = 'Motion Controls';
+    // Reset positions
+    gsap.to({ x: targetOrientX, y: targetOrientY }, {
+      x: 0, y: 0,
+      duration: 1,
+      ease: 'power2.out',
+      onUpdate: function() {
+        targetOrientX = this.targets()[0].x;
+        targetOrientY = this.targets()[0].y;
+        document.documentElement.style.setProperty('--gyro-x', `${targetOrientX * 12}px`);
+        document.documentElement.style.setProperty('--gyro-y', `${targetOrientY * 12}px`);
+      }
+    });
+  };
+
+  if (IS_MOBILE && window.DeviceOrientationEvent) {
+    gyroToggle.style.display = 'flex';
+    gyroToggle.addEventListener('click', () => {
+      if (!gyroActive) {
+        enableGyro();
+      } else {
+        disableGyro();
+      }
+    });
+  }
+
+  // ─── Touch drag tracking as fallback when gyro is disabled ───
+  if (IS_MOBILE) {
     window.addEventListener('touchmove', (e) => {
-      if (e.touches.length === 1) {
+      if (!gyroActive && e.touches.length === 1) {
         const touch = e.touches[0];
         targetOrientX = (touch.clientX / window.innerWidth - 0.5) * 1.5;
         targetOrientY = (touch.clientY / window.innerHeight - 0.5) * 1.5;
+        document.documentElement.style.setProperty('--gyro-x', `${targetOrientX * 15}px`);
+        document.documentElement.style.setProperty('--gyro-y', `${targetOrientY * 15}px`);
       }
     }, { passive: true });
 
     window.addEventListener('touchend', () => {
-      // Slowly drift back to center
-      gsap.to({ x: targetOrientX, y: targetOrientY }, {
-        x: 0, y: 0,
-        duration: 2,
-        ease: 'power2.out',
-        onUpdate: function() {
-          targetOrientX = this.targets()[0].x;
-          targetOrientY = this.targets()[0].y;
-        }
-      });
+      if (!gyroActive) {
+        gsap.to({ x: targetOrientX, y: targetOrientY }, {
+          x: 0, y: 0,
+          duration: 2,
+          ease: 'power2.out',
+          onUpdate: function() {
+            targetOrientX = this.targets()[0].x;
+            targetOrientY = this.targets()[0].y;
+            document.documentElement.style.setProperty('--gyro-x', `${targetOrientX * 15}px`);
+            document.documentElement.style.setProperty('--gyro-y', `${targetOrientY * 15}px`);
+          }
+        });
+      }
     }, { passive: true });
   }
 
