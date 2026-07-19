@@ -1070,6 +1070,89 @@ footer .highlight { color: var(--text-secondary); }
   transition: transform 0.4s var(--ease-out-expo);
 }
 
+
+/* ═══════════════════════════════════════════════════════
+   MOBILE ANIMATIONS & KEYFRAMES
+   ═══════════════════════════════════════════════════════ */
+
+/* Ambient glow that pulses behind sections on mobile */
+@keyframes mobileGlowPulse {
+  0%, 100% {
+    opacity: 0.04;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.08;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+}
+
+/* Subtle floating animation for mobile hero photo */
+@keyframes mobileHeroFloat {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.06;
+  }
+  50% {
+    transform: translate(-50%, -48%) scale(1.02);
+    opacity: 0.09;
+  }
+}
+
+/* Shimmer effect for skill tags on mobile */
+@keyframes mobileShimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+/* Subtle border glow animation for cards on mobile */
+@keyframes mobileBorderGlow {
+  0%, 100% {
+    border-color: rgba(255, 255, 255, 0.06);
+  }
+  50% {
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+}
+
+/* Gradient sweep across the hero name on mobile */
+@keyframes mobileGradientSweep {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Scroll indicator bounce on mobile */
+@keyframes mobileBounce {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-6px);
+  }
+}
+
+/* Section header line draw on mobile */
+@keyframes mobileLineDraw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+
 /* ═══════════════════════════════════════
    RESPONSIVE
    ═══════════════════════════════════════ */
@@ -1080,14 +1163,55 @@ footer .highlight { color: var(--text-secondary); }
 }
 
 @media (max-width: 768px) {
+  /* ─── Base Cursor Reset ─── */
   body { cursor: auto; }
   .cursor-dot, .cursor-outline { display: none !important; }
 
+  /* ─── Sections ─── */
   section { padding: 6rem 1.5rem; min-height: auto; }
   #hero { min-height: 100vh; min-height: 100dvh; }
 
-  .hero-photo-bg { display: none; }
+  /* ─── HERO PHOTO — VISIBLE on mobile with ambient animation ─── */
+  .hero-photo-bg {
+    display: block !important;
+    height: 65vh;
+    animation: mobileHeroFloat 6s ease-in-out infinite;
+    mask-image: radial-gradient(ellipse 65% 60% at 50% 45%, black 5%, transparent 55%);
+    -webkit-mask-image: radial-gradient(ellipse 65% 60% at 50% 45%, black 5%, transparent 55%);
+    opacity: 0.06;
+  }
 
+  /* ─── Hero name animated gradient on mobile ─── */
+  .hero-name {
+    font-size: clamp(3rem, 15vw, 5rem);
+    background: linear-gradient(
+      270deg,
+      #ffffff 0%,
+      #888888 25%,
+      #ffffff 50%,
+      #555555 75%,
+      #ffffff 100%
+    );
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: mobileGradientSweep 8s ease-in-out infinite;
+  }
+
+  .hero-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+  }
+
+  .hero-tagline { font-size: 1rem; }
+
+  /* ─── Mobile scroll indicator bounce ─── */
+  .scroll-indicator {
+    animation: mobileBounce 2s ease-in-out infinite;
+  }
+
+  /* ─── NAVBAR ─── */
   #navbar { padding: 1rem 1.5rem; }
   #navbar.scrolled { padding: 0.8rem 1.5rem; }
 
@@ -1114,38 +1238,206 @@ footer .highlight { color: var(--text-secondary); }
   .nav-links a { font-size: 1.4rem; letter-spacing: 0.15em; }
   .nav-links a::before { display: none; }
 
-  .hero-name { font-size: clamp(3rem, 15vw, 5rem); }
-  .hero-label { font-size: 0.6rem; letter-spacing: 0.25em; }
-  .hero-tagline { font-size: 1rem; }
-
+  /* ─── ABOUT ─── */
   .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
   .about-image-wrapper { max-width: 320px; margin: 0 auto; }
   .section-header { margin-bottom: 3rem; }
 
-  .skills-grid { grid-template-columns: 1fr; }
-  .skill-category { padding: 2rem; }
+  /* About image — visible with touch-friendly color reveal */
+  .about-image-wrapper img {
+    filter: grayscale(60%) contrast(1.05);
+  }
 
+  /* Show image tag always on mobile (no hover) */
+  .image-tag {
+    opacity: 0.6;
+    transform: translateY(0);
+  }
+
+  /* Corner brackets — show with ambient glow animation */
+  .corner {
+    display: block;
+    opacity: 0.3;
+    animation: mobileBorderGlow 4s ease-in-out infinite;
+  }
+
+  .corner-tl, .corner-bl {
+    animation-delay: 0s;
+  }
+  .corner-tr, .corner-br {
+    animation-delay: 2s;
+  }
+
+  /* Section header line draw animation */
+  .header-line {
+    transform-origin: left;
+    animation: mobileLineDraw 1.2s var(--ease-out-expo) both;
+  }
+
+  /* ─── SKILLS — Glassmorphism cards on mobile ─── */
+  .skills-grid { grid-template-columns: 1fr; }
+
+  .skill-category {
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: transform 0.4s var(--ease-out-expo),
+                border-color 0.4s,
+                background 0.4s,
+                box-shadow 0.4s;
+  }
+
+  /* Active state for touch */
+  .skill-category:active {
+    transform: scale(0.97);
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.03);
+  }
+
+  /* Skill icon glow on mobile */
+  .skill-icon {
+    color: var(--text-secondary);
+  }
+
+  /* Skill tags — touch interaction with shimmer */
+  .skill-tag {
+    -webkit-tap-highlight-color: transparent;
+    transition: all 0.25s var(--ease-out-expo);
+  }
+
+  .skill-tag:active {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: scale(0.95);
+  }
+
+  /* ─── PROJECTS — Cards with touch feedback ─── */
   .project-card {
     grid-template-columns: 1fr;
     padding: 2rem;
     gap: 1.5rem;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.4s var(--ease-out-expo),
+                border-color 0.4s,
+                background 0.4s,
+                box-shadow 0.5s;
   }
+
+  /* Touch active states */
+  .project-card:active {
+    transform: scale(0.98);
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.04);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+
+  .project-card:active .project-number {
+    color: var(--text-secondary);
+  }
+
+  .project-card:active .project-tech span {
+    border-color: var(--border-hover);
+    color: var(--text-secondary);
+  }
+
   .project-number { font-size: 2rem; }
-  .project-arrow { display: none; }
 
+  /* Show arrow on mobile with a subtle style */
+  .project-arrow {
+    display: flex;
+    width: 44px;
+    height: 44px;
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .project-arrow svg {
+    width: 16px;
+    height: 16px;
+    stroke: var(--text-muted);
+  }
+
+  /* ─── CONTACT ─── */
   .contact-heading { font-size: clamp(2rem, 8vw, 3.5rem); }
-  .contact-email { font-size: 0.9rem; padding: 0.9rem 2rem; }
+  .contact-email {
+    font-size: 0.9rem;
+    padding: 0.9rem 2rem;
+    -webkit-tap-highlight-color: transparent;
+  }
 
+  .contact-email:active {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: scale(0.97);
+  }
+
+  /* Social links touch feedback */
+  .social-link {
+    -webkit-tap-highlight-color: transparent;
+    transition: all 0.3s var(--ease-out-expo);
+  }
+
+  .social-link:active {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: var(--text-primary);
+    transform: scale(0.9);
+  }
+
+  /* ─── FOOTER ─── */
   .footer-content { flex-direction: column; gap: 0.5rem; }
 
+  /* ─── MARQUEE ─── */
   .marquee-content { font-size: 1.2rem; }
 
-  .corner { display: none; }
+  /* ─── Mobile ambient glow behind hero ─── */
+  #hero::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: mobileGlowPulse 5s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── Mobile ambient glow behind contact ─── */
+  #contact::before {
+    content: '';
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.04) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: mobileGlowPulse 6s ease-in-out infinite;
+    animation-delay: 1s;
+    pointer-events: none;
+    z-index: 0;
+  }
 }
 
 @media (max-width: 480px) {
   .hero-name { font-size: clamp(2.5rem, 14vw, 4rem); }
   .project-card { padding: 1.5rem; }
+  .project-arrow {
+    top: 1.5rem;
+    right: 1.5rem;
+    width: 38px;
+    height: 38px;
+  }
   #navbar { padding: 1rem; }
   section { padding: 5rem 1rem; }
 }

@@ -1,22 +1,24 @@
 import * as THREE from 'three';
 
 /* ═══════════════════════════════════════════════════════
-   VISHNU JARIWALA — PORTFOLIO ENGINE v2
+   VISHNU JARIWALA — PORTFOLIO ENGINE v3
    Lenis · Three.js · GSAP · Character Splits · Magnetic
+   Now with full mobile 3D + animations
    ═══════════════════════════════════════════════════════ */
 
 const IS_MOBILE = window.matchMedia('(max-width: 768px)').matches;
+const IS_TOUCH = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
 
 /* ─────────────────────────────────────────────────────
    0. LENIS SMOOTH SCROLL
    ───────────────────────────────────────────────────── */
 const lenis = new Lenis({
-  duration: 1.3,
+  duration: IS_MOBILE ? 1.0 : 1.3,
   easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
   orientation: 'vertical',
   smoothWheel: true,
-  touchMultiplier: 1.5,
+  touchMultiplier: IS_MOBILE ? 2 : 1.5,
 });
 
 // Connect Lenis to GSAP ScrollTrigger
@@ -32,29 +34,29 @@ gsap.ticker.lagSmoothing(0);
 
 
 /* ─────────────────────────────────────────────────────
-   1. THREE.JS 3D SCENE
+   1. THREE.JS 3D SCENE (Desktop + Mobile)
    ───────────────────────────────────────────────────── */
 (function initThreeScene() {
   const container = document.getElementById('canvas-container');
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x050505, 0.02);
+  scene.fog = new THREE.FogExp2(0x050505, IS_MOBILE ? 0.015 : 0.02);
 
   const camera = new THREE.PerspectiveCamera(
-    60,
+    IS_MOBILE ? 65 : 60,
     window.innerWidth / window.innerHeight,
     0.1,
     1000
   );
-  camera.position.set(0, 0, 30);
+  camera.position.set(0, 0, IS_MOBILE ? 35 : 30);
 
   const renderer = new THREE.WebGLRenderer({
-    antialias: true,
+    antialias: !IS_MOBILE, // Save performance on mobile
     alpha: true,
-    powerPreference: 'high-performance',
+    powerPreference: IS_MOBILE ? 'low-power' : 'high-performance',
   });
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, IS_MOBILE ? 1.5 : 2));
   renderer.setClearColor(0x000000, 0);
   container.appendChild(renderer.domElement);
 
@@ -69,11 +71,14 @@ gsap.ticker.lagSmoothing(0);
     () => new THREE.TorusKnotGeometry(0.6, 0.2, 32, 8),
   ];
 
-  const MESH_COUNT = IS_MOBILE ? 8 : 18;
+  // ── More meshes on mobile now (but still fewer than desktop)
+  const MESH_COUNT = IS_MOBILE ? 12 : 18;
   for (let i = 0; i < MESH_COUNT; i++) {
     const createGeo = geometryTypes[Math.floor(Math.random() * geometryTypes.length)];
     const geo = createGeo();
-    const opacity = 0.04 + Math.random() * 0.08;
+    const opacity = IS_MOBILE
+      ? 0.05 + Math.random() * 0.1  // Slightly more visible on mobile
+      : 0.04 + Math.random() * 0.08;
     const mat = new THREE.MeshBasicMaterial({
       color: 0xffffff,
       wireframe: true,
@@ -82,19 +87,23 @@ gsap.ticker.lagSmoothing(0);
     });
     const mesh = new THREE.Mesh(geo, mat);
 
+    const spread = IS_MOBILE ? 45 : 60;
     mesh.position.set(
-      (Math.random() - 0.5) * 60,
-      (Math.random() - 0.5) * 60,
+      (Math.random() - 0.5) * spread,
+      (Math.random() - 0.5) * spread,
       (Math.random() - 0.5) * 30 - 10
     );
-    mesh.scale.setScalar(0.6 + Math.random() * 2.8);
+    mesh.scale.setScalar(IS_MOBILE
+      ? 0.8 + Math.random() * 2.2  // Slightly larger on mobile for visibility
+      : 0.6 + Math.random() * 2.8
+    );
 
     mesh.userData = {
-      rotSpeedX: (Math.random() - 0.5) * 0.006,
-      rotSpeedY: (Math.random() - 0.5) * 0.006,
+      rotSpeedX: (Math.random() - 0.5) * (IS_MOBILE ? 0.008 : 0.006),
+      rotSpeedY: (Math.random() - 0.5) * (IS_MOBILE ? 0.008 : 0.006),
       rotSpeedZ: (Math.random() - 0.5) * 0.002,
       floatSpeed: 0.2 + Math.random() * 0.5,
-      floatAmp: 0.3 + Math.random() * 1.5,
+      floatAmp: IS_MOBILE ? 0.5 + Math.random() * 2 : 0.3 + Math.random() * 1.5,
       initialY: mesh.position.y,
       phase: Math.random() * Math.PI * 2,
       baseOpacity: opacity,
@@ -105,7 +114,7 @@ gsap.ticker.lagSmoothing(0);
   }
 
   // ─── Particle Field ───
-  const PARTICLE_COUNT = IS_MOBILE ? 120 : 400;
+  const PARTICLE_COUNT = IS_MOBILE ? 200 : 400;
   const particleGeo = new THREE.BufferGeometry();
   const positions = new Float32Array(PARTICLE_COUNT * 3);
 
@@ -119,9 +128,9 @@ gsap.ticker.lagSmoothing(0);
 
   const particleMat = new THREE.PointsMaterial({
     color: 0xffffff,
-    size: IS_MOBILE ? 0.08 : 0.04,
+    size: IS_MOBILE ? 0.1 : 0.04,  // Bigger particles on mobile for visibility
     transparent: true,
-    opacity: 0.35,
+    opacity: IS_MOBILE ? 0.4 : 0.35,
     sizeAttenuation: true,
     depthWrite: false,
   });
@@ -130,7 +139,7 @@ gsap.ticker.lagSmoothing(0);
   scene.add(particles);
 
   // ─── Secondary Particle Layer ───
-  const PARTICLE_COUNT_2 = IS_MOBILE ? 40 : 150;
+  const PARTICLE_COUNT_2 = IS_MOBILE ? 60 : 150;
   const particleGeo2 = new THREE.BufferGeometry();
   const positions2 = new Float32Array(PARTICLE_COUNT_2 * 3);
 
@@ -144,9 +153,9 @@ gsap.ticker.lagSmoothing(0);
 
   const particleMat2 = new THREE.PointsMaterial({
     color: 0xffffff,
-    size: 0.02,
+    size: IS_MOBILE ? 0.04 : 0.02,
     transparent: true,
-    opacity: 0.15,
+    opacity: IS_MOBILE ? 0.2 : 0.15,
     sizeAttenuation: true,
     depthWrite: false,
   });
@@ -154,7 +163,7 @@ gsap.ticker.lagSmoothing(0);
   const particles2 = new THREE.Points(particleGeo2, particleMat2);
   scene.add(particles2);
 
-  // ─── Mouse Tracking ───
+  // ─── Mouse / Touch Tracking ───
   let mouseX = 0, mouseY = 0;
   let targetMouseX = 0, targetMouseY = 0;
 
@@ -163,6 +172,71 @@ gsap.ticker.lagSmoothing(0);
       targetMouseX = (e.clientX / window.innerWidth - 0.5) * 2;
       targetMouseY = (e.clientY / window.innerHeight - 0.5) * 2;
     });
+  }
+
+  // ─── Device Orientation for Mobile 3D ───
+  let orientX = 0, orientY = 0;
+  let targetOrientX = 0, targetOrientY = 0;
+
+  if (IS_MOBILE && window.DeviceOrientationEvent) {
+    // Try requesting permission for iOS 13+
+    const enableOrientation = () => {
+      if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+        DeviceOrientationEvent.requestPermission()
+          .then((state) => {
+            if (state === 'granted') {
+              window.addEventListener('deviceorientation', handleOrientation);
+            }
+          })
+          .catch(console.error);
+      } else {
+        window.addEventListener('deviceorientation', handleOrientation);
+      }
+    };
+
+    function handleOrientation(e) {
+      if (e.gamma !== null && e.beta !== null) {
+        // gamma: left/right tilt (-90 to 90)
+        // beta: front/back tilt (-180 to 180)
+        targetOrientX = Math.max(-1, Math.min(1, (e.gamma || 0) / 30));
+        targetOrientY = Math.max(-1, Math.min(1, ((e.beta || 0) - 45) / 30));
+      }
+    }
+
+    // Enable on first touch (for iOS permission)
+    document.addEventListener('touchstart', function onFirstTouch() {
+      enableOrientation();
+      document.removeEventListener('touchstart', onFirstTouch);
+    }, { once: true });
+
+    // Also try immediately for Android
+    enableOrientation();
+  }
+
+  // ─── Touch drag tracking as fallback ───
+  if (IS_MOBILE) {
+    let touchStartX = 0, touchStartY = 0;
+
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 1) {
+        const touch = e.touches[0];
+        targetOrientX = (touch.clientX / window.innerWidth - 0.5) * 1.5;
+        targetOrientY = (touch.clientY / window.innerHeight - 0.5) * 1.5;
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchend', () => {
+      // Slowly drift back to center
+      gsap.to({ x: targetOrientX, y: targetOrientY }, {
+        x: 0, y: 0,
+        duration: 2,
+        ease: 'power2.out',
+        onUpdate: function() {
+          targetOrientX = this.targets()[0].x;
+          targetOrientY = this.targets()[0].y;
+        }
+      });
+    }, { passive: true });
   }
 
   // ─── Resize ───
@@ -180,13 +254,28 @@ gsap.ticker.lagSmoothing(0);
     const elapsed = clock.getElapsedTime();
     const scrollFraction = lenis.scroll / Math.max(1, document.body.scrollHeight - window.innerHeight);
 
-    mouseX += (targetMouseX - mouseX) * 0.04;
-    mouseY += (targetMouseY - mouseY) * 0.04;
+    if (IS_MOBILE) {
+      // Smooth orientation tracking
+      orientX += (targetOrientX - orientX) * 0.06;
+      orientY += (targetOrientY - orientY) * 0.06;
 
-    camera.position.x = mouseX * 4;
-    camera.position.y = -mouseY * 4 - scrollFraction * 12;
-    camera.position.z = 30 - scrollFraction * 18;
-    camera.lookAt(0, -scrollFraction * 12, -10);
+      // Combine scroll + orientation + auto-drift for mobile
+      const autoDriftX = Math.sin(elapsed * 0.15) * 0.3;
+      const autoDriftY = Math.cos(elapsed * 0.12) * 0.2;
+
+      camera.position.x = (orientX + autoDriftX) * 3;
+      camera.position.y = -(orientY + autoDriftY) * 3 - scrollFraction * 10;
+      camera.position.z = 35 - scrollFraction * 14;
+      camera.lookAt(0, -scrollFraction * 10, -10);
+    } else {
+      mouseX += (targetMouseX - mouseX) * 0.04;
+      mouseY += (targetMouseY - mouseY) * 0.04;
+
+      camera.position.x = mouseX * 4;
+      camera.position.y = -mouseY * 4 - scrollFraction * 12;
+      camera.position.z = 30 - scrollFraction * 18;
+      camera.lookAt(0, -scrollFraction * 12, -10);
+    }
 
     for (const mesh of meshes) {
       const d = mesh.userData;
@@ -267,7 +356,7 @@ function splitTextIntoChars(element) {
 
 document.querySelectorAll('.hero-name-line').forEach(splitTextIntoChars);
 
-// Hero entrance timeline
+// Hero entrance timeline (works on BOTH mobile and desktop)
 const heroTL = gsap.timeline({ delay: 2.5 });
 
 heroTL
@@ -280,21 +369,21 @@ heroTL
   .from('.hero-name-line:first-child .char', {
     y: '110%',
     opacity: 0,
-    rotateX: -40,
-    duration: 0.8,
-    stagger: 0.035,
+    rotateX: IS_MOBILE ? -20 : -40,
+    duration: IS_MOBILE ? 0.6 : 0.8,
+    stagger: IS_MOBILE ? 0.04 : 0.035,
     ease: 'power4.out',
   }, '-=0.3')
   .from('.hero-name-line:last-child .char', {
     y: '110%',
     opacity: 0,
-    rotateX: -40,
-    duration: 0.8,
-    stagger: 0.035,
+    rotateX: IS_MOBILE ? -20 : -40,
+    duration: IS_MOBILE ? 0.6 : 0.8,
+    stagger: IS_MOBILE ? 0.04 : 0.035,
     ease: 'power4.out',
   }, '-=0.55')
   .to('.hero-photo-bg', {
-    opacity: 0.08,
+    opacity: IS_MOBILE ? 0.06 : 0.08,
     duration: 1.5,
     ease: 'power2.out',
   }, '-=0.8')
@@ -346,22 +435,34 @@ if (!IS_MOBILE) {
       scrub: 1,
     },
   });
+} else {
+  // ─── Mobile: Fade hero photo on scroll ───
+  gsap.to('.hero-photo-bg', {
+    opacity: 0,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '#hero',
+      start: 'top top',
+      end: '70% top',
+      scrub: 1,
+    },
+  });
 }
 
 
 /* ─────────────────────────────────────────────────────
-   5. SCROLL-TRIGGERED REVEAL ANIMATIONS
+   5. SCROLL-TRIGGERED REVEAL ANIMATIONS (Desktop + Mobile)
    ───────────────────────────────────────────────────── */
-// Generic reveal elements
+// Generic reveal elements — works on both platforms
 document.querySelectorAll('.reveal').forEach((el) => {
   gsap.to(el, {
     y: 0,
     opacity: 1,
-    duration: 0.9,
+    duration: IS_MOBILE ? 0.7 : 0.9,
     ease: 'power3.out',
     scrollTrigger: {
       trigger: el,
-      start: 'top 88%',
+      start: IS_MOBILE ? 'top 92%' : 'top 88%',
       toggleActions: 'play none none none',
     },
   });
@@ -370,18 +471,18 @@ document.querySelectorAll('.reveal').forEach((el) => {
 // ─── About Image Reveal (curtain mask) ───
 gsap.to('.image-mask', {
   scaleY: 0,
-  duration: 1.4,
+  duration: IS_MOBILE ? 1.0 : 1.4,
   ease: 'power4.inOut',
   scrollTrigger: {
     trigger: '.about-image-wrapper',
-    start: 'top 80%',
+    start: IS_MOBILE ? 'top 85%' : 'top 80%',
     toggleActions: 'play none none none',
   },
 });
 
 // Corner brackets animate in after image reveals
 gsap.to('.corner', {
-  opacity: 0.6,
+  opacity: IS_MOBILE ? 0.3 : 0.6,
   duration: 0.6,
   delay: 0.3,
   stagger: 0.08,
@@ -393,45 +494,63 @@ gsap.to('.corner', {
   },
 });
 
-// Parallax on about image
+// Parallax on about image (works on both, gentler on mobile)
 gsap.to('.about-image-wrapper img', {
-  y: -40,
+  y: IS_MOBILE ? -20 : -40,
   ease: 'none',
   scrollTrigger: {
     trigger: '.about-image-wrapper',
     start: 'top bottom',
     end: 'bottom top',
-    scrub: 1.5,
+    scrub: IS_MOBILE ? 1 : 1.5,
   },
 });
 
-// ─── Skill Categories Stagger ───
+// ─── Skill Categories Stagger (both platforms) ───
 gsap.from('.skill-category', {
-  y: 50,
+  y: IS_MOBILE ? 40 : 50,
   opacity: 0,
-  duration: 0.7,
-  stagger: 0.12,
+  duration: IS_MOBILE ? 0.6 : 0.7,
+  stagger: IS_MOBILE ? 0.1 : 0.12,
   ease: 'power3.out',
   scrollTrigger: {
     trigger: '.skills-grid',
-    start: 'top 82%',
+    start: IS_MOBILE ? 'top 90%' : 'top 82%',
   },
 });
 
-// ─── Project Cards Stagger ───
+// ─── Skill Tags Stagger (mobile only - adds life) ───
+if (IS_MOBILE) {
+  document.querySelectorAll('.skill-category').forEach((cat) => {
+    const tags = cat.querySelectorAll('.skill-tag');
+    gsap.from(tags, {
+      scale: 0.8,
+      opacity: 0,
+      duration: 0.4,
+      stagger: 0.05,
+      ease: 'back.out(1.5)',
+      scrollTrigger: {
+        trigger: cat,
+        start: 'top 88%',
+      },
+    });
+  });
+}
+
+// ─── Project Cards Stagger (both platforms) ───
 gsap.from('.project-card', {
-  y: 60,
+  y: IS_MOBILE ? 50 : 60,
   opacity: 0,
-  duration: 0.8,
-  stagger: 0.15,
+  duration: IS_MOBILE ? 0.7 : 0.8,
+  stagger: IS_MOBILE ? 0.12 : 0.15,
   ease: 'power3.out',
   scrollTrigger: {
     trigger: '.projects-grid',
-    start: 'top 82%',
+    start: IS_MOBILE ? 'top 90%' : 'top 82%',
   },
 });
 
-// ─── Contact Section ───
+// ─── Contact Section (both platforms) ───
 gsap.set(['.contact-heading', '.contact-subtext', '.contact-email'], {
   opacity: 0,
   y: 40,
@@ -444,7 +563,7 @@ gsap.to('.contact-heading', {
   ease: 'power3.out',
   scrollTrigger: {
     trigger: '#contact',
-    start: 'top 80%',
+    start: IS_MOBILE ? 'top 85%' : 'top 80%',
     toggleActions: 'play none none none',
   },
 });
@@ -457,7 +576,7 @@ gsap.to('.contact-subtext', {
   ease: 'power3.out',
   scrollTrigger: {
     trigger: '#contact',
-    start: 'top 75%',
+    start: IS_MOBILE ? 'top 80%' : 'top 75%',
     toggleActions: 'play none none none',
   },
 });
@@ -470,7 +589,7 @@ gsap.to('.contact-email', {
   ease: 'power3.out',
   scrollTrigger: {
     trigger: '#contact',
-    start: 'top 70%',
+    start: IS_MOBILE ? 'top 75%' : 'top 70%',
     toggleActions: 'play none none none',
   },
 });
@@ -487,21 +606,36 @@ gsap.from('.social-links', {
   },
 });
 
+// ─── Mobile: Social links stagger ───
+if (IS_MOBILE) {
+  gsap.from('.social-link', {
+    scale: 0,
+    opacity: 0,
+    duration: 0.5,
+    stagger: 0.1,
+    ease: 'back.out(2)',
+    scrollTrigger: {
+      trigger: '.social-links',
+      start: 'top 92%',
+    },
+  });
+}
+
 // ─── Marquee parallax speed effect ───
 gsap.to('.marquee-track', {
-  x: -80,
+  x: IS_MOBILE ? -40 : -80,
   ease: 'none',
   scrollTrigger: {
     trigger: '.marquee-section',
     start: 'top bottom',
     end: 'bottom top',
-    scrub: 2,
+    scrub: IS_MOBILE ? 1 : 2,
   },
 });
 
 
 /* ─────────────────────────────────────────────────────
-   6. TYPEWRITER EFFECT
+   6. TYPEWRITER EFFECT (Desktop + Mobile)
    ───────────────────────────────────────────────────── */
 (function typewriter() {
   const el = document.getElementById('typewriter');
@@ -581,6 +715,31 @@ navLinks.querySelectorAll('a').forEach((link) => {
     lenis.start();
   });
 });
+
+// ─── Mobile nav links entrance animation ───
+if (IS_MOBILE) {
+  const navLinksItems = navLinks.querySelectorAll('a');
+
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((m) => {
+      if (m.target.classList.contains('open')) {
+        gsap.from(navLinksItems, {
+          y: 40,
+          opacity: 0,
+          duration: 0.5,
+          stagger: 0.08,
+          ease: 'power3.out',
+          delay: 0.15,
+        });
+      }
+    });
+  });
+
+  observer.observe(navLinks, {
+    attributes: true,
+    attributeFilter: ['class'],
+  });
+}
 
 
 /* ─────────────────────────────────────────────────────
@@ -664,7 +823,10 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
     const targetId = this.getAttribute('href');
     const target = document.querySelector(targetId);
     if (target) {
-      lenis.scrollTo(target, { offset: -80, duration: 1.6 });
+      lenis.scrollTo(target, {
+        offset: IS_MOBILE ? -60 : -80,
+        duration: IS_MOBILE ? 1.2 : 1.6,
+      });
     }
   });
 });
@@ -715,3 +877,69 @@ function updateActiveNav() {
 
 lenis.on('scroll', updateActiveNav);
 updateActiveNav();
+
+
+/* ─────────────────────────────────────────────────────
+   13. MOBILE-SPECIFIC ENHANCEMENTS
+   ───────────────────────────────────────────────────── */
+if (IS_MOBILE) {
+  // ─── Section dividers animate in on scroll ───
+  document.querySelectorAll('.header-line').forEach((line) => {
+    gsap.from(line, {
+      scaleX: 0,
+      transformOrigin: 'left center',
+      duration: 1.2,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: line,
+        start: 'top 85%',
+        toggleActions: 'play none none none',
+      },
+    });
+  });
+
+  // ─── Marquee text shimmer on scroll ───
+  gsap.to('.marquee-content', {
+    '-webkit-text-stroke-color': 'rgba(255, 255, 255, 0.2)',
+    duration: 0.6,
+    ease: 'power2.out',
+    scrollTrigger: {
+      trigger: '.marquee-section',
+      start: 'top 90%',
+      end: 'bottom 10%',
+      toggleActions: 'play reverse play reverse',
+    },
+  });
+
+  // ─── Project card number count-up on mobile ───
+  document.querySelectorAll('.project-card:not(.coming-soon) .project-number').forEach((num) => {
+    const target = num.textContent;
+    gsap.from(num, {
+      textContent: '00',
+      duration: 0.8,
+      ease: 'power1.inOut',
+      snap: { textContent: 1 },
+      scrollTrigger: {
+        trigger: num,
+        start: 'top 90%',
+        toggleActions: 'play none none none',
+      },
+      onUpdate: function() {
+        // Keep zero-padded format
+        num.textContent = String(Math.round(parseFloat(num.textContent))).padStart(2, '0');
+      },
+      onComplete: function() {
+        num.textContent = target;
+      }
+    });
+  });
+
+  // ─── Haptic feedback on card tap (if available) ───
+  document.querySelectorAll('.project-card, .skill-category, .social-link, .contact-email').forEach((el) => {
+    el.addEventListener('touchstart', () => {
+      if (navigator.vibrate) {
+        navigator.vibrate(10);
+      }
+    }, { passive: true });
+  });
+}
