@@ -1070,6 +1070,15 @@ footer .highlight { color: var(--text-secondary); }
   transition: transform 0.4s var(--ease-out-expo);
 }
 
+/* Restore flex on elements that need it for icon centering */
+.social-link.magnetic,
+.project-arrow.magnetic,
+.contact-email.magnetic {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 
 /* ═══════════════════════════════════════════════════════
    MOBILE ANIMATIONS & KEYFRAMES
